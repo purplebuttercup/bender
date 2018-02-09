@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<title>Bender</title>
+    <script type="text/javascript" src="d3.js"></script>
+  
+    <!-- Angular Library -->
+    <script type="text/javascript" src="angular/angular.min.js"></script>
+    <script type="text/javascript" src="angular/angular-animate.min.js"></script>
+
+    <!-- Material Library -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.1.3/material.indigo-pink.min.css">
+    <script defer src="https://code.getmdl.io/1.1.3/material.min.js"></script>
+
+    <!-- FontAwesome -->
+    <script src="https://use.fontawesome.com/5558c1fa25.js"></script>
+
+    <!-- SmoothScroll -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-scroll/1.0.0/angular-scroll.js"></script>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- D3 -->
+    <script type="text/javascript" src="http://d3js.org/d3.v2.min.js"></script>
+
+    <script type="text/javascript" src="makeMultiTable.js"></script>
+    <script type="text/javascript" src="setupPlot.js"></script>
+    <script type="text/javascript" src="drawLinePlot.js"></script>
+    <script type="text/javascript" src="toggleStat.js"></script>
+    <script type="text/javascript" src="load_qtrly_stats.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="line_plot.css" />
+    <link rel="stylesheet" type="text/css" href="table.css" />
+
+    <!-- css --->
+    <link rel="stylesheet" type="text/css" href="my_style.css">
+
+    <!-- Icon Tab -->
+    <link rel="icon" href="bender.png">
+    
+    <script type="text/javascript" src="app.js"></script>
+</head>
+<body ng-app="mainBend" class="about" ng-controller="MainCtrl">
+
+        <header data-scroll-header>
+            <!-- Top row, always visible -->
+            <div class="main-contained">
+                <!-- Title -->
+                <div class="hamburger-cover">
+                    <div class="logo">
+                        <img src="bender.png">
+                        <span >Bender bending machine</span>
+                    </div>
+                    <ul class="nav">
+                        <li ng-class="{active : visible}">
+                            <a ng-click="showTf()">Services</a>
+                        </li>
+                        <li ng-class="{active : !visible}">
+                            <a ng-click="showTf()">Details</a>
+                        </li>
+                    </ul>
+                    <ul class="nav aux">
+                        <li>
+                            <a ng-click="showOthers()">Others</a>
+                        </li>
+                    </ul>
+
+                </div>
+
+                <div class="mdl-layout-spacer"></div>
+            </div>
+        </header>
+        <div class="main-contained">
+            <main ng-if="visible && !visibleOthers">
+
+                <section class="hero">
+                    <div class="grid"></div>
+                    <div class="mobile-show hero-img">
+                        <img src="neural_net3.gif">
+                    </div>
+                </section>
+
+                <section class="lighter">
+                    <div class="contained">
+                        <div class="col">
+                            <h2>Service operations</h2>
+                            <p class="body">
+                                Your problem is our problem. Tell us a about it and we'll seek for the end of it. You will have your
+                                operation sorted out into a category and assigned to the best of our teams.
+                            </p>
+                        </div>
+                        <div class="col col-right col-right-container">
+                            <object data="drawing.svg" type="image/svg+xml" class="square">
+                            </object>
+                            <i class="fa fa-wrench" aria-hidden="true"></i>
+
+                        </div>
+                    </div>
+                    <div class="contained form-contained" ng-controller="MainCtrl">
+                        <form ng-submit="classify('here')">
+                            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                <input class="mdl-textfield__input" type="text" ng-model="sentence" id="sentence">
+                                <label class="mdl-textfield__label" for="sentence">
+                                    Operation
+                                </label>
+                            </div>
+                            <div>
+                                <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" id="submit" type="submit">
+                                    Search
+                                </button>
+                            </div>
+                            <div ng-show="loading" class="mdl-spinner mdl-spinner--single-color mdl-js-spinner is-active"></div>
+                        </form>
+
+                    </div>
+                </section>
+
+                <section class="fund shaded">
+                    <div class="parts">
+                        <div class="left">
+                            <div class="profile">
+
+                            </div>
+                        </div>
+                        <div class="right" id="here">
+                            <div class="contained">
+                                <div ng-if="class" class="col">
+                                    <h2>Operation category</h2>
+                                    <p class="large">{{class}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section ng-if="class"  class="ready">
+                    <h1>Ready to be assigned to your team ?</h1>
+                    <div class="border-callout">
+                        <div class="border-callout-title">One click away</div>
+                        <p class="border-callout-subtitle">
+                            The goal is to turn data into information,
+                            <b> and information into insight.</b>
+                            Your insight is our interest.
+                        </p>
+                        <div class="cta js-geo-waitlist">
+                            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" ng-click="load_teams('table', 'plot')">
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section ng-show="visibleTeams" class="lighter-service lighter ">
+                    <div id="table"></div>
+
+
+
+                    <div id="team_name" class="grid">
+                        <div class="unit half no-pad">
+                            <div id="plot"></div>
+                        </div>
+                        <div ng-show="visibleTeamsName" class="unit half quarter">
+                            <div class="question">
+                                <div class="title">
+                                    {{teamName}}
+                                </div>
+                                <p>
+                                    This team seems to be the best suited team for your type of problem. It has been selected
+                                    based on it's history of dealing with this kind of situations. Without history, there would be
+                                    no future.
+                                </p>
+                                <div class="cta">
+                                    <a class="inline-button anim" ng-click="goUp()">
+                                        BACK UP
+                                        <i class="material-icons">expand_less</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+            </main >
+
+            <div class="tf" ng-if="!visible && !visibleOthers">
+                <embed src="http://10.0.0.154:6006/#events" width="100%" height="100%"></embed>
+            </div>
+
+            <div ng-if="visibleOthers" class="others">
+                <div class="form-container">
+                    <div class="header-img-container">
+                        <div class="header-img-img"></div>
+                    </div>
+                    <div class="top-of-page">
+                        <div class="form-heading">
+                            <h1 class="form-title">
+                                42
+                            </h1>
+                            <div class="form-desc no-ignore-whitespace">
+                                Bender project was made with TensorFlow. Machine learning models
+                                were designed to offer the best services for car operations and team allocation.
+                            </div>
+                            <div class="form-desc no-ignore-whitespace">
+                                Never forget that.. "life is paradoxically coincidental to the ironical tyranny
+                                applicable to the unparalleled definition of reverse entropy."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer ng-if="visible || visibleOthers">
+            <div class="main-contained">
+                <a class="footer-logo">
+                    Bender-Company™
+                </a>
+                <ul class="nav">
+                    <li>
+                        <a href="https://www.google.com/about/">Help</a>
+                    </li>
+                    <li>
+                        <a href="https://www.google.com/about/">Privacy</a>
+                    </li>
+                    <li>
+                        <a href="https://www.google.com/about/">Terms</a>
+                    </li>
+                </ul>
+            </div>
+        </footer>
+
+</body>
+</html>
